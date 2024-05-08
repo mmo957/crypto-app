@@ -1,0 +1,26 @@
+@import url(https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Binance PLEX";
+  background-color: #1e1e1e;
+  font-weight: 700;
+}
+
+.background-pic {
+  /* background-image: url("../public/bg.jpeg"); */
+  background-size: cover;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/bg.jpeg");
+  background-position: center;
+  background-repeat: no-repeat;
+}
