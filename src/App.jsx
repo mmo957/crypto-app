@@ -12,7 +12,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
-        <Route path="first" element={<FirstPage />} />
+        <Route path="" element={<FirstPage />} />
         <Route path="second" element={<SecondPage />} />
       </Route>
     )
