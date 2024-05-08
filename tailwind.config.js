@@ -6,7 +6,7 @@ export default {
       colors: {
         negative: "#0ECB81",
         positive: "#0ECB81",
-        orange: "#E59838",
+        orange: "#0ECB81",
         color1: "#D38F4B",
         color2: "#5286BC",
         color3: "#86BA70",
