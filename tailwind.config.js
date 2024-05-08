@@ -7,7 +7,7 @@ export default {
         negative: "#0ECB81",
         positive: "#0ECB81",
         orange: "#0ECB81",
-        color1: "#D38F4B",
+        color1: "#0ECB81",
         color2: "#5286BC",
         color3: "#86BA70",
         color4: "#602F2C",
