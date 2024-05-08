@@ -1,1 +1,1 @@
-export const API = "https://crypto-app-api-pi.vercel.app";
+export const API = "https://crypto-app-api-seven.vercel.app";
