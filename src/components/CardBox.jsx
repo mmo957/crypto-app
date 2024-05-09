@@ -34,7 +34,7 @@ function CardBox({ name = "BTC", percentage = -10, logo = "1", index }) {
         />
         {index === 0 ? (
           <a
-            href="https://www.google.com/"
+            href="https://www.mexc.com/de-DE/auth/signup?inviteCode=1f5Kt"
             className={`text-white ${
               isMobile ? "text-[16px]" : "text-[20px]"
             } `}
