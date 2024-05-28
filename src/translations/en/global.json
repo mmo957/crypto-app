@@ -1,0 +1,64 @@
+{
+  "links": {
+    "home": "Home",
+    "weekly_exchange": "Weekly Exchange"
+  },
+  "chart": { "others": "Others", "btc": "BTC", "eth": "ETH" },
+  "home": {
+    "crypto_table": {
+      "head1": "CRYPTO ",
+      "head2": "MARKET",
+      "head3": "CURRENT ",
+      "head4": "TABLE"
+    },
+    "pichart": "MARKET SHARE",
+    "fear_index": "FEAR AND GREED INDEX",
+    "greed": "GREED",
+    "trend_24hour": "Cryptocurrency Trend",
+    "increase_24hour": "Increasing Cryptocurrencies",
+    "decrease_24hour": "Decreasing Cryptocurrencies",
+    "24hour_tradevolume": "24-HOUR TRADING VOLUME",
+    "billion": "BILLIONS $",
+    "trillion": "TRILLIONS $",
+    "other": "OTHER"
+  },
+  "overview": {
+    "heading": {
+      "1": "WEEKLY",
+      "2": " AND",
+      "3": "MONTHLY",
+      "4": "INCREASING ",
+      "5": "DECREASING"
+    },
+    "weekly_change": "Weekly Change",
+    "monthly_change": "Monthly Change",
+    "rising_crypto": "Rising Cryptocurrencies",
+    "falling_crypto": "Falling Cryptocurrencies",
+    "last_1_week": "Last 1 Week",
+    "last_1_month": "Last 1 Month",
+    "count": "Count"
+  },
+  "detail": {
+    "rank": "RANK",
+    "all_time_high": "All Time High",
+    "all_time_low": "All Time Low",
+    "market_information": "Market Information",
+    "price_change(1h)": "Price Change (1h)",
+    "price_change(24h)": "Price Change (24h)",
+    "price_change(7d)": "Price Change (7d)",
+    "volume(24h)": "Volume 24(hours)",
+    "popularity": "Popularity",
+    "market_cap": "Market Cap",
+    "circulation_supply": "Circulation Supply",
+    "ucid": "UCID",
+    "total_market_supply": "Total Maximum Supply",
+    "fully_diluted_market_cap": "Fully Diluted Market Cap",
+    "audits": "Audits",
+    "socials": "Socials",
+    "website": "Website",
+    "low": "Low",
+    "high": "High",
+    "share": "Share",
+    "24_hour_low_&_high": "24 Hour Low & High"
+  }
+}

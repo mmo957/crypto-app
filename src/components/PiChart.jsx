@@ -1,13 +1,9 @@
 import "./style/style.css";
-import React, { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import axios from "axios";
 import { API } from "../utils/api";
-const data = [
-  { name: "BTC", value: 400 },
-  { name: "ETH", value: 456 },
-  { name: "DİĞER", value: 300 },
-];
+import { useTranslation } from "react-i18next";
 
 const COLORS = ["#CE720D", "#DA961B", "#E5B837"];
 
@@ -26,7 +22,6 @@ const renderCustomizedLabel = ({
   const x = cx + Math.cos(-midAngle * RADIAN) * radius;
   const y = cy + Math.sin(-midAngle * RADIAN) * radius;
 
-  console.log(index, "Index");
   return (
     <text
       x={x}
@@ -46,16 +41,22 @@ const renderCustomizedLabel = ({
 };
 
 const PieChartComponent = () => {
-  const [chartData, setChartData] = useState(data);
+  const { t } = useTranslation();
+  const data = [
+    { name: t("chart.btc"), value: 400 },
+    { name: t("chart.eth"), value: 456 },
+    { name: t("chart.others"), value: 300 },
+  ];
 
+  const [chartData, setChartData] = useState(data);
   const getData = async () => {
     const res = await axios.get(`${API}/market-cap`);
     if (res?.data?.status === "success") {
       const new_data = [
-        { name: "BTC", value: res?.data?.data?.btc_dominance },
-        { name: "ETH", value: res?.data?.data?.eth_dominance },
+        { name: t("chart.btc"), value: res?.data?.data?.btc_dominance },
+        { name: t("chart.eth"), value: res?.data?.data?.eth_dominance },
         {
-          name: "DİĞER",
+          name: t("chart.others"),
           value:
             100 -
             res?.data?.data?.btc_dominance -

@@ -1,0 +1,68 @@
+{
+  "links": {
+    "home": "Startseite",
+    "weekly_exchange": "Wöchentlicher Austausch"
+  },
+  "chart": {
+    "others": "Andere",
+    "btc": "BTC",
+    "eth": "ETH"
+  },
+  "home": {
+    "crypto_table": {
+      "head1": "KRYPTO ",
+      "head2": "MARKT",
+      "head3": " AKTUELL ",
+      "head4": "TABELLE"
+    },
+    "pichart": "MARKTANTEIL",
+    "fear_index": "ANGST- UND GIERINDEX",
+    "greed": "GIER",
+    "trend_24hour": "Kryptowährungstrend",
+    "increase_24hour": "Steigende Kryptowährungen",
+    "decrease_24hour": "Fallende Kryptowährungen",
+    "24hour_tradevolume": "24-STUNDEN-HANDELSVOLUMEN",
+    "billion": "MILLIARDEN $",
+    "trillion": "BILLIONEN $",
+    "other": "ANDERE"
+  },
+  "overview": {
+    "heading": {
+      "1": "WÖCHENTLICHE",
+      "2": " UND",
+      "3": "MONATLICHE",
+      "4": "STEIGENDE ",
+      "5": "FALLENDEN"
+    },
+    "weekly_change": "Wöchentliche Änderung",
+    "monthly_change": "Monatliche Änderung",
+    "rising_crypto": "Steigende Kryptowährungen",
+    "falling_crypto": "Fallende Kryptowährungen",
+    "last_1_week": "Letzte 1 Woche",
+    "last_1_month": "Letzter 1 Monat",
+    "count": "Anzahl"
+  },
+  "detail": {
+    "rank": "Rang",
+    "all_time_high": "Allzeithoch",
+    "all_time_low": "Allzeittief",
+    "market_information": "Marktinformationen",
+    "price_change(1h)": "Preisänderung (1h)",
+    "price_change(24h)": "Preisänderung (24h)",
+    "price_change(7d)": "Preisänderung (7d)",
+    "volume(24h)": "Volumen (24 Stunden)",
+    "popularity": "Popularität",
+    "market_cap": "Marktkapitalisierung",
+    "circulation_supply": "Umlaufversorgung",
+    "ucid": "UCID",
+    "total_market_supply": "Gesamtmarktversorgung",
+    "fully_diluted_market_cap": "Vollständig verwässerte Marktkapitalisierung",
+    "audits": "Prüfungen",
+    "socials": "Soziale Netzwerke",
+    "website": "Webseite",
+    "low": "Tief",
+    "high": "Hoch",
+    "share": "Teilen",
+    "24_hour_low_&_high": "24 Stunden Tief & Hoch"
+  }
+}

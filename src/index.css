@@ -14,6 +14,7 @@ body {
   font-family: "Binance PLEX";
   background-color: #1e1e1e;
   font-weight: 700;
+  overflow-x: hidden;
 }
 
 .background-pic {

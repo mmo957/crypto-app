@@ -3,6 +3,10 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import axios from "axios";
 import { API } from "./utils/api.js";
+import NodeCache from "node-cache";
+
+//  ==================> SEARCH QUERY AND COIN DATA
+const apiCache = new NodeCache({ stdTTL: 60 * 5 }); // Cache for 5 minutes
 const app = express();
 
 app.use(
@@ -43,12 +47,13 @@ app.get("/latest", async (req, res) => {
       status: "success",
       data: response?.data?.data,
     });
-  } catch (ex) {
+  } catch (err) {
     // error
-    console.log(ex, "ERROR");
-    res.status(404).json({
+    res.status(err?.status || 400).json({
       status: "failed",
-      message: "Something Went Wrong!",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
     });
   }
 });
@@ -68,31 +73,7 @@ app.get("/specific/:coin", (req, res) => {
         data: response?.data?.data,
       });
     })
-    .catch(() => {
-      res.status(404).json({
-        status: "failed",
-        message: "Something Went Wrong!",
-      });
-    });
-});
-
-//   SPECIFIC ID
-app.get("/coin/:id", (req, res) => {
-  const id = req.params.id;
-  axios
-    .get(`${API}/info?id=${id}`, {
-      headers: {
-        "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
-      },
-    })
-    .then((response) => {
-      res.status(200).json({
-        status: "success",
-        data: response?.data?.data,
-      });
-    })
     .catch((err) => {
-      console.log(err);
       res.status(err?.status || 400).json({
         status: "failed",
         code: err.code || "server Error",
@@ -102,54 +83,92 @@ app.get("/coin/:id", (req, res) => {
     });
 });
 
+//   SPECIFIC ID
+app.get("/coin/:id", async (req, res) => {
+  const id = req.params.id;
+
+  // Check if data is cached
+  const cachedData = apiCache.get(id);
+  if (cachedData) {
+    return res.status(200).json({
+      status: "success",
+      data: cachedData,
+    });
+  }
+
+  // If data is not cached, fetch from external API
+  try {
+    const response = await axios.get(`${API}/info?id=${id}`, {
+      headers: {
+        "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+      },
+    });
+
+    const responseData = response?.data?.data;
+
+    // Cache the fetched data
+    apiCache.set(id, responseData);
+
+    res.status(200).json({
+      status: "success",
+      data: responseData,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err?.status || 400).json({
+      status: "failed",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
+    });
+  }
+});
+
 //    Trending Losers and Gainers
+
 app.get("/trending/losers-gainer", async (req, res) => {
   const { sort, time, limit } = req.query;
-  if (sort && time && limit) {
-    axios
-      .get(
-        `${API}/trending/gainers-losers?time_period=${time}&sort_dir=${sort}&limit=${limit}`,
-        {
-          headers: {
-            "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        res.status(200).json({
-          status: "success",
-          data: response?.data?.data,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(404).json({
-          status: "failed",
-          message: "Something Went Wrong!",
-        });
-      });
-  } else {
-    axios
-      .get(`${API}/trending/gainers-losers`, {
-        headers: {
-          "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        res.status(200).json({
-          status: "success",
-          data: response?.data?.data,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(404).json({
-          status: "failed",
-          message: "Something Went Wrong!",
-        });
-      });
+  const cacheKey = `${sort}-${time}-${limit}`;
+
+  // Check if data is cached
+  const cachedData = apiCache.get(cacheKey);
+  if (cachedData) {
+    return res.status(200).json({
+      status: "success",
+      data: cachedData,
+    });
+  }
+
+  // If data is not cached, fetch from external API
+  const url =
+    time && sort && limit
+      ? `${API}/trending/gainers-losers?time_period=${time}&sort_dir=${sort}&limit=${limit}`
+      : `${API}/trending/gainers-losers`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+      },
+    });
+
+    const responseData = response?.data?.data;
+
+    // Cache the fetched data
+    apiCache.set(cacheKey, responseData);
+
+    res.status(200).json({
+      status: "success",
+      data: responseData,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err?.status || 400).json({
+      status: "failed",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
+    });
   }
 });
 
@@ -175,9 +194,11 @@ app.get("/trending/latest", async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).json({
+      res.status(err?.status || 400).json({
         status: "failed",
-        message: "Something Went Wrong!",
+        code: err.code || "server Error",
+        message: err.message || "Something Went Wrong!",
+        error: err,
       });
     });
 });
@@ -199,11 +220,252 @@ app.get("/market-cap", async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).json({
+      res.status(err?.status || 400).json({
         status: "failed",
-        message: "Something Went Wrong!",
+        code: err.code || "server Error",
+        message: err.message || "Something Went Wrong!",
+        error: err,
       });
     });
+});
+
+//   Quotes Latest   QUERY ID --------------------->
+
+app.get("/quotes/latest", async (req, res) => {
+  const { id } = req.query;
+  if (!id) {
+    return res.status(404).json({
+      status: "failed",
+      message: "Please Provide Id",
+    });
+  }
+
+  const cacheKey = `quote-${id}`;
+
+  // Check if data is cached
+  const cachedData = apiCache.get(cacheKey);
+  if (cachedData) {
+    return res.status(200).json({
+      status: "success",
+      data: cachedData,
+    });
+  }
+
+  // If data is not cached, fetch from external API
+  try {
+    const response = await axios.get(
+      `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${id}`,
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+        },
+      }
+    );
+
+    const responseData = response?.data?.data;
+
+    // Cache the fetched data
+    apiCache.set(cacheKey, responseData);
+
+    res.status(200).json({
+      status: "success",
+      data: responseData,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err?.status || 400).json({
+      status: "failed",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
+    });
+  }
+});
+//   OHLCV LATEST   QUERY ID --------------------->
+app.get("/ohlcv/latest", async (req, res) => {
+  const { id } = req.query;
+  if (id) {
+    axios
+      .get(
+        `https://pro-api.coinmarketcap.com/v2/cryptocurrency/ohlcv/latest?id=${id}`,
+        {
+          headers: {
+            "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+          },
+        }
+      )
+      .then((response) => {
+        res.status(200).json({
+          status: "success",
+          data: response?.data?.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(err?.status || 400).json({
+          status: "failed",
+          code: err.code || "server Error",
+          message: err.message || "Something Went Wrong!",
+          error: err,
+        });
+      });
+  } else
+    res.status(404).json({
+      status: "failed",
+      message: "Please Provide Id",
+    });
+});
+//   Listings Latest--------------------->
+app.get("/listings/latest", async (req, res) => {
+  axios
+    .get(
+      `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=1000`,
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+        },
+      }
+    )
+    .then((response) => {
+      console.log(response.data);
+      res.status(200).json({
+        status: "success",
+        data: response?.data?.data,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(err?.status || 400).json({
+        status: "failed",
+        code: err.code || "server Error",
+        message: err.message || "Something Went Wrong!",
+        error: err,
+      });
+    });
+});
+
+//   BOTH FOR OLD AND NEW
+
+app.get("/listings/latest/coins", async (req, res) => {
+  const { search } = req.query;
+
+  // Check if data is cached
+  const cachedData = apiCache.get("coinData");
+  if (cachedData) {
+    // Search within cached data
+    const filteredData = searchData(cachedData, search);
+    if (filteredData.length > 0) {
+      return res.status(200).json({
+        status: "success",
+        data: filteredData,
+      });
+    }
+  }
+
+  // If data is not cached or search result is not found in cache, fetch from external API
+  try {
+    const [latestResponse, newResponse] = await Promise.all([
+      axios.get(
+        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5000`,
+        {
+          headers: {
+            "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+          },
+        }
+      ),
+      axios.get(
+        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/new?limit=5000`,
+        {
+          headers: {
+            "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+          },
+        }
+      ),
+    ]);
+
+    const latestData = latestResponse?.data?.data || [];
+    const newData = newResponse?.data?.data || [];
+    const combinedData = [...latestData, ...newData];
+
+    // Cache the fetched data
+    apiCache.set("coinData", combinedData);
+
+    const filteredData = searchData(combinedData, search);
+    res.status(200).json({
+      status: "success",
+      data: filteredData,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err?.response?.status || 400).json({
+      status: "failed",
+      code: err.code || "server_error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
+    });
+  }
+});
+
+const searchData = (data, search) => {
+  return data.filter((item) => {
+    return (
+      item?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      item?.symbol?.toLowerCase().includes(search.toLowerCase())
+    );
+  });
+};
+
+//   PRICE PERFORMANCE STATS   QUERY ID TIME ---------------->
+app.get("/price-performance-stats/latest", async (req, res) => {
+  const { id, time } = req.query;
+
+  if (!id) {
+    return res.status(404).json({
+      status: "failed",
+      message: "Please Provide Id",
+    });
+  }
+
+  const cacheKey = `pricePerformance-${id}-${time || "all_time"}`;
+
+  // Check if data is cached
+  const cachedData = apiCache.get(cacheKey);
+  if (cachedData) {
+    return res.status(200).json({
+      status: "success",
+      data: cachedData,
+    });
+  }
+
+  // If data is not cached, fetch from external API
+  try {
+    const response = await axios.get(
+      `https://pro-api.coinmarketcap.com/v2/cryptocurrency/price-performance-stats/latest?id=${id}&time_period=${time || "all_time"}`,
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": "e987b05b-c72d-49cc-82ce-4a3a2ddfa9d0",
+        },
+      }
+    );
+
+    const responseData = response?.data?.data;
+
+    // Cache the fetched data
+    apiCache.set(cacheKey, responseData);
+
+    res.status(200).json({
+      status: "success",
+      data: responseData,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err?.status || 400).json({
+      status: "failed",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
+    });
+  }
 });
 //  Fear Index
 app.get("/fear-greed-index", async (req, res) => {
@@ -223,11 +485,12 @@ app.get("/fear-greed-index", async (req, res) => {
       status: "success",
       data: response.data.fgi,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({
+  } catch (err) {
+    res.status(err?.status || 400).json({
       status: "failed",
-      message: "Something Went Wrong!",
+      code: err.code || "server Error",
+      message: err.message || "Something Went Wrong!",
+      error: err,
     });
   }
 });

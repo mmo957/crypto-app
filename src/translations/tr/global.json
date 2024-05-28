@@ -1,0 +1,68 @@
+{
+  "links": {
+    "home": "Ana Sayfa",
+    "weekly_exchange": "Haftalık Değişim"
+  },
+  "chart": {
+    "others": "Diğer",
+    "btc": "BTC",
+    "eth": "ETH"
+  },
+  "home": {
+    "crypto_table": {
+      "head1": "KRİPTO ",
+      "head2": "PİYASASINDA",
+      "head3": " GÜNCEL ",
+      "head4": "TABLO"
+    },
+    "pichart": "PİYASA HAKİMİYETİ",
+    "fear_index": "KORKU VE AÇGÖZLÜLÜK ENDEKSİ",
+    "greed": "AÇGÖZLÜLÜK",
+    "trend_24hour": "Trend Kripto Paralar",
+    "increase_24hour": "Yükselen Kripto Paralar",
+    "decrease_24hour": "Düşen Kripto Paralar",
+    "24hour_tradevolume": "24 SAATLİK İŞLEM HACMİ",
+    "billion": "MİLYAR$",
+    "trillion": "TRIİLYON$",
+    "other": "DİĞER"
+  },
+  "overview": {
+    "heading": {
+      "1": "HAFTALIK",
+      "2": " VE",
+      "3": "AYLIK",
+      "4": "YÜKSELENLER ",
+      "5": "DÜŞENLER"
+    },
+    "weekly_change": "Haftalık Değişim",
+    "monthly_change": "Aylık Değişim",
+    "rising_crypto": "Yükselen Kripto Paralar",
+    "falling_crypto": "Düşen Kripto Paralar",
+    "last_1_week": "Son 1 Hafta",
+    "last_1_month": "Son 1 Ay",
+    "count": "Sonlay"
+  },
+  "detail": {
+    "rank": "Sıralama",
+    "all_time_high": "Tüm Zamanların En Yükseği",
+    "all_time_low": "Tüm Zamanların En Düşüğü",
+    "market_information": "Piyasa Bilgisi",
+    "price_change(1h)": "Fiyat Değişimi (1s)",
+    "price_change(24h)": "Fiyat Değişimi (24s)",
+    "price_change(7d)": "Fiyat Değişimi (7g)",
+    "volume(24h)": "Hacim (24 saat)",
+    "popularity": "Popülerlik",
+    "market_cap": "Piyasa Değeri",
+    "circulation_supply": "Dolaşımdaki Arz",
+    "ucid": "UCID",
+    "total_market_supply": "Toplam Piyasa Arzı",
+    "fully_diluted_market_cap": "Tam Seyreltilmiş Piyasa Değeri",
+    "audits": "Denetimler",
+    "socials": "Sosyal Medya",
+    "website": "Web Sitesi",
+    "low": "Düşük",
+    "high": "Yüksek",
+    "share": "Paylaş",
+    "24_hour_low_&_high": "24 Saatlik En Düşük ve En Yüksek"
+  }
+}

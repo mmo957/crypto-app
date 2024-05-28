@@ -1,16 +1,19 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import { MdArrowDropUp, MdArrowDropDown } from "react-icons/md";
 import MainBoxStyle from "./style/MainBoxStyle";
 import PieChartComponent from "./PiChart";
-import ClockMeter from "./ClockMeter";
 import axios from "axios";
 import { API } from "../utils/api";
 import MainBox from "./MainBox";
 import Logo from "./Logo";
 import EuroRate from "./EuroRate";
-
+import { useTranslation } from "react-i18next";
+import Navbar from "./Navbar";
+import { Link } from "react-router-dom";
 function FirstPage() {
+  //   FOR MULTILINGUAL FEATURE
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [trendingData, setTrendingData] = useState([]);
   const [gainersDayData, setGainersDayData] = useState([]);
@@ -31,18 +34,12 @@ function FirstPage() {
     // getFearData();
   }, []);
 
-  // const getFearData = () => {
-  //   axios
-  //     .get(`${API}/fear-greed-index`)
-  //     // .get(`http://localhost:3000/fear-greed-index`)
-  //     .then((res) => {
-  //       const data = res?.data?.data?.now?.value;
-  //       setFearValue(data);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error fetching fear data:", err);
-  //     });
-  // };
+  const formatNumberEurope = (number) => {
+    return new Intl.NumberFormat("de-DE", {
+      style: "decimal",
+      minimumFractionDigits: 2,
+    }).format(number);
+  };
 
   const getData = async () => {
     try {
@@ -131,10 +128,6 @@ function FirstPage() {
     }
   };
 
-  function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
-
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -193,220 +186,242 @@ function FirstPage() {
   }
 
   return (
-    <div className="py-2 text-center px-8 lg:px-16 flex items-center flex-col gap-3 text-white max-w-[1400px] mx-auto background-pic">
-      <h1 className=" text-[30px] sm:text-[44px] text-center font-bold text-white">
-        <span className="text-orange">KRİPTO</span> PİYASASINDA <br /> GÜNCEL{" "}
-        <span className="text-orange">TABLO</span>
-      </h1>
+    <div className="py-2 text-center  flex items-center flex-col gap-3 text-white max-w-full background-pic">
+      <Navbar />
 
-      <MainBoxStyle>
-        <div className="flex flex-col-reverse md:flex-row-reverse items-center gap-10 w-full p-3 ">
-          <div className="w-[50%] flex items-center flex-col ">
-            <h1 className="text-special font-bold  text-[24px]  sm:text-[30px] ">
-              PİYASA HAKİMİYETİ
-            </h1>
-            <PieChartComponent />
-          </div>
-          <div className="w-full sm:w-[50%] flex flex-col  items-center gap-3">
-            <div className="flex  bg-[#4C4C4C] rounded-[40px] p-3  items-center gap-10">
-              <div className="flex items-center flex-col ">
-                <Logo />
-                <h1 className="text-special font-bold  text-[20px]">Bitcoin</h1>
-                <h1 className="font-bold text-[24px]">
-                  $
-                  {numberWithCommas(
-                    bitcoinData.price.toFixed(2).toLocaleString()
-                  )}
-                </h1>
-                <div className="flex items-center font-bold mt-[-10px] text-[18px] ">
-                  {bitcoinData.percent < 0 ? (
-                    <MdArrowDropDown className="text-[40px]" color="#F85A58" />
-                  ) : (
-                    <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
-                  )}
-                  <span
-                    className={`${
-                      bitcoinData.percent < 0
-                        ? "text-negative"
-                        : "text-positive "
-                    }`}
-                  >
-                    {" "}
-                    %
-                    {bitcoinData.percent < 0
-                      ? bitcoinData.percent.toFixed(2) * -1
-                      : bitcoinData.percent.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex  items-center  flex-col ">
-                <Logo logo="1027" />
-                <h1 className="text-special font-bold  text-[20px]">
-                  Ethereum
-                </h1>
-                <h1 className="font-bold text-[24px]">
-                  $
-                  {numberWithCommas(
-                    ethereumData.price.toFixed(2).toLocaleString("en-US")
-                  )}
-                </h1>
-                <div className="flex items-center font-bold mt-[-10px]  text-[18px]">
-                  {ethereumData.percent < 0 ? (
-                    <MdArrowDropDown className="text-[40px]" color="#F85A58" />
-                  ) : (
-                    <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
-                  )}
-                  <span
-                    className={`${
-                      ethereumData.percent < 0
-                        ? "text-negative"
-                        : "text-positive "
-                    }`}
-                  >
-                    {" "}
-                    %
-                    {ethereumData.percent < 0
-                      ? ethereumData.percent.toFixed(2) * -1
-                      : ethereumData.percent.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex bg-[#4C4C4C]  rounded-[50px] py-1 px-14  items-center flex-col ">
-              <h1 className="text-special font-bold   text-[20px]">
-                MARKET CAP
-              </h1>
-              <h1 className="font-bold text-[20px]">
-                {globalData.marketCap} TRIİLYON$
-              </h1>
-              <div className="flex items-center font-bold  mt-[-10px]  text-[18px]">
-                {globalData.marketCapPercent < 0 ? (
-                  <MdArrowDropDown className="text-[40px]" color="#F85A58" />
-                ) : (
-                  <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
-                )}
-                <span
-                  className={`${
-                    globalData.marketCapPercent < 0
-                      ? "text-negative"
-                      : "text-positive "
-                  }`}
-                >
-                  {" "}
-                  %
-                  {globalData.marketCapPercent < 0
-                    ? globalData.marketCapPercent * -1
-                    : globalData.marketCapPercent}
-                </span>
-              </div>
-            </div>
-            <div className="flex bg-[#4C4C4C] rounded-[50px] py-1 px-8 flex-col  items-center">
-              <h1 className="text-special font-bold   text-[20px]">
-                24 SAATLİK İŞLEM HACMİ
-              </h1>
-              <h1 className="font-bold text-[20px]">
-                {globalData.volume} MİLYAR$
-              </h1>
-              <div className="flex items-center font-bold mt-[-10px]  text-[18px]">
-                {globalData.volume_percent < 0 ? (
-                  <MdArrowDropDown className="text-[40px]" color="#F85A58" />
-                ) : (
-                  <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
-                )}
-                <span
-                  className={`${
-                    globalData.volume_percent < 0
-                      ? "text-negative"
-                      : "text-positive "
-                  }`}
-                >
-                  {" "}
-                  %
-                  {globalData.volume_percent < 0
-                    ? globalData.volume_percent * -1
-                    : globalData.volume_percent}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </MainBoxStyle>
-      <div className="flex flex-col sm:flex-row w-full items-center gap-10">
-        <div className="w-full  sm:w-[50%] flex flex-col gap-4 items-center">
-          <MainBoxStyle>
-            <div className="flex flex-col gap-2 w-full items-center">
-              <h1 className="text-special text-[20px] md:text-[28px]  font-bold ">
-                KORKU VE AÇGÖZLÜLÜK <br /> ENDEKSİ
-              </h1>
-              {/* <ClockMeter value={fearValue} /> */}
-              <img
-                src="https://alternative.me/crypto/fear-and-greed-index.png"
-                alt="Latest Crypto Fear & Greed Index"
-              />
-              <h1 className="text-special text-[20px] md:text-[28px]  font-bold ">
-                AÇGÖZLÜLÜK
-              </h1>
-            </div>
-          </MainBoxStyle>
-        </div>
+      <div className="  px-4 lg:px-16 flex items-center flex-col gap-3 text-white max-w-[1400px] w-full mx-auto ">
+        <h1 className=" text-[30px] sm:text-[44px] text-center font-bold text-white">
+          <span className="text-orange">{t("home.crypto_table.head1")}</span>{" "}
+          {t("home.crypto_table.head2")} <br /> {t("home.crypto_table.head3")}{" "}
+          <span className="text-orange">{t("home.crypto_table.head4")}</span>
+        </h1>
 
-        <div className="w-full sm:w-[50%]">
-          <MainBoxStyle>
-            <div className="flex flex-col gap-3 w-full items-center">
-              <h1 className="text-special font-bold text-[24px] md:text-[28px] ">
-                Trend Kripto Paralar <br /> 24H
+        <MainBoxStyle>
+          <div className="flex flex-col-reverse md:flex-row-reverse items-center gap-10 w-full p-3 ">
+            <div className="w-[50%] flex items-center flex-col ">
+              <h1 className="text-special font-bold  text-[24px]  sm:text-[30px] ">
+                {t("home.pichart")}
               </h1>
-              <div className="flex sm:flex-col md:flex-row  flex-wrap justify-between gap-4 w-full">
-                {trendingData.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-start gap-4 md:gap-1 lg:gap-4 items-center bg-[#666666] rounded-full p-3 w-[45%]  sm:w-full md:w-[45%] "
-                  >
-                    <Logo
-                      logo={item.logo}
-                      width={isMobile ? "40px" : "60px"}
-                      height={isMobile ? "40px" : "60px"}
-                      dim={64}
-                    />
-                    <span className="text-[14px] sm:text-[20px]  md:text-[16px] lg:text-[20px] ">
-                      {item.name}
+              <PieChartComponent />
+            </div>
+            <div className="w-full sm:w-[50%] flex flex-col  items-center gap-3">
+              <div className="flex  bg-[#4C4C4C] rounded-[40px] p-3  items-center gap-10">
+                <div className="flex items-center flex-col ">
+                  <Link to={`/overview/1`}>
+                    <Logo />
+                  </Link>
+                  <Link to={`/overview/1`}>
+                    <h1 className="text-special font-bold  text-[20px]">
+                      Bitcoin
+                    </h1>
+                  </Link>
+                  <h1 className="font-bold text-[24px]">
+                    ${formatNumberEurope(bitcoinData.price.toFixed(2))}
+                  </h1>
+                  <div className="flex items-center font-bold mt-[-10px] text-[18px] ">
+                    {bitcoinData.percent < 0 ? (
+                      <MdArrowDropDown
+                        className="text-[40px]"
+                        color="#F85A58"
+                      />
+                    ) : (
+                      <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
+                    )}
+                    <span
+                      className={`${
+                        bitcoinData.percent < 0
+                          ? "text-negative"
+                          : "text-positive "
+                      }`}
+                    >
+                      {" "}
+                      %
+                      {bitcoinData.percent < 0
+                        ? bitcoinData.percent.toFixed(2) * -1
+                        : bitcoinData.percent.toFixed(2)}
                     </span>
                   </div>
-                ))}
+                </div>
+                <div className="flex  items-center  flex-col ">
+                  <Link to={`/overview/1027`}>
+                    <Logo logo="1027" />
+                  </Link>
+                  <Link to={`/overview/1027`}>
+                    <h1 className="text-special font-bold  text-[20px]">
+                      Ethereum
+                    </h1>
+                  </Link>
+                  <h1 className="font-bold text-[24px]">
+                    ${formatNumberEurope(ethereumData.price.toFixed(2))}
+                  </h1>
+                  <div className="flex items-center font-bold mt-[-10px]  text-[18px]">
+                    {ethereumData.percent < 0 ? (
+                      <MdArrowDropDown
+                        className="text-[40px]"
+                        color="#F85A58"
+                      />
+                    ) : (
+                      <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
+                    )}
+                    <span
+                      className={`${
+                        ethereumData.percent < 0
+                          ? "text-negative"
+                          : "text-positive "
+                      }`}
+                    >
+                      {" "}
+                      %
+                      {ethereumData.percent < 0
+                        ? ethereumData.percent.toFixed(2) * -1
+                        : ethereumData.percent.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex bg-[#4C4C4C]  rounded-[50px] py-1 px-14  items-center flex-col ">
+                <h1 className="text-special font-bold   text-[20px]">
+                  MARKET CAP
+                </h1>
+                <h1 className="font-bold text-[20px]">
+                  {globalData.marketCap} {t("home.trillion")}
+                </h1>
+                <div className="flex items-center font-bold  mt-[-10px]  text-[18px]">
+                  {globalData.marketCapPercent < 0 ? (
+                    <MdArrowDropDown className="text-[40px]" color="#F85A58" />
+                  ) : (
+                    <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
+                  )}
+                  <span
+                    className={`${
+                      globalData.marketCapPercent < 0
+                        ? "text-negative"
+                        : "text-positive "
+                    }`}
+                  >
+                    {" "}
+                    %
+                    {globalData.marketCapPercent < 0
+                      ? globalData.marketCapPercent * -1
+                      : globalData.marketCapPercent}
+                  </span>
+                </div>
+              </div>
+              <div className="flex bg-[#4C4C4C] rounded-[50px] py-1 px-8 flex-col  items-center">
+                <h1 className="text-special font-bold   text-[20px]">
+                  {t("home.24hour_tradevolume")}
+                </h1>
+                <h1 className="font-bold text-[20px]">
+                  {globalData.volume} {t("home.billion")}
+                </h1>
+                <div className="flex items-center font-bold mt-[-10px]  text-[18px]">
+                  {globalData.volume_percent < 0 ? (
+                    <MdArrowDropDown className="text-[40px]" color="#F85A58" />
+                  ) : (
+                    <MdArrowDropUp className="text-[40px]" color="#0ECB81" />
+                  )}
+                  <span
+                    className={`${
+                      globalData.volume_percent < 0
+                        ? "text-negative"
+                        : "text-positive "
+                    }`}
+                  >
+                    {" "}
+                    %
+                    {globalData.volume_percent < 0
+                      ? globalData.volume_percent * -1
+                      : globalData.volume_percent}
+                  </span>
+                </div>
               </div>
             </div>
-          </MainBoxStyle>
+          </div>
+        </MainBoxStyle>
+        <div className="flex flex-col sm:flex-row w-full items-center gap-10">
+          <div className="w-full  sm:w-[50%] flex flex-col gap-4 items-center">
+            <MainBoxStyle>
+              <div className="flex flex-col gap-2 w-full items-center">
+                <h1 className="text-special text-[20px] md:text-[28px]  font-bold md:w-[60%] ">
+                  {/* KORKU VE AÇGÖZLÜLÜK <br /> ENDEKSİ */}
+                  {t("home.fear_index")}
+                </h1>
+                {/* <ClockMeter value={fearValue} /> */}
+                <img
+                  src="https://alternative.me/crypto/fear-and-greed-index.png"
+                  alt="Latest Crypto Fear & Greed Index"
+                />
+                <h1 className="text-special text-[20px] md:text-[28px]  font-bold ">
+                  {t("home.greed")}
+                </h1>
+              </div>
+            </MainBoxStyle>
+          </div>
+
+          <div className="w-full sm:w-[50%]">
+            <MainBoxStyle>
+              <div className="flex flex-col gap-3 w-full items-center">
+                <h1 className="text-special font-bold text-[24px] md:text-[28px] ">
+                  {t("home.trend_24hour")}
+                  <br /> 24H
+                </h1>
+                <div className="flex sm:flex-col md:flex-row  flex-wrap justify-between gap-4 w-full">
+                  {trendingData.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex justify-start gap-4 md:gap-1 lg:gap-4 items-center bg-[#666666] rounded-full p-3 w-[45%]  sm:w-full md:w-[45%] "
+                    >
+                      <Link to={`/overview/${item.logo}`}>
+                        <Logo
+                          logo={item.logo}
+                          width={isMobile ? "40px" : "60px"}
+                          height={isMobile ? "40px" : "60px"}
+                          dim={64}
+                        />
+                      </Link>
+                      <Link to={`/overview/${item.logo}`}>
+                        <span className="text-[14px] sm:text-[20px]  md:text-[16px] lg:text-[20px] ">
+                          {item.name}
+                        </span>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </MainBoxStyle>
+          </div>
         </div>
-      </div>
-      <div>
-        <div className="bg-black w-full flex flex-col gap-4 items-center rounded-[40px] px-8 py-3">
-          <h1 className="font-bold text-[22px] sm:text-[26px]">
-            <span className="text-orange">$ </span>
-            <EuroRate />
-            <span className="text-[#8F8F8F]   ">€</span>
-          </h1>
+        <div>
+          <div className="bg-black w-full flex flex-col gap-4 items-center rounded-[40px] px-8 py-3">
+            <h1 className="font-bold text-[22px] sm:text-[26px]">
+              <span className="text-orange">$ </span>
+              <EuroRate />
+              <span className="text-[#8F8F8F]   ">€</span>
+            </h1>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col sm:flex-row justify-between w-full gap-4  md:gap-16 items-center">
-        <div className="w-full sm:w-[50%]">
-          <MainBox
-            heading={
-              <h1 className="text-special font-bold  text-[24px] md:text-[28px] ">
-                Yükselen Kripto Paralar <br /> 24H
-              </h1>
-            }
-            list_items={gainersDayData}
-          />
-        </div>
-        <div className="w-full sm:w-[50%]">
-          <MainBox
-            heading={
-              <h1 className="text-special font-bold   text-[24px] md:text-[28px] ">
-                Düşen Kripto Paralar <br /> 24H
-              </h1>
-            }
-            list_items={loosersDayData}
-          />
+        <div className="flex flex-col sm:flex-row justify-between w-full gap-4  md:gap-16 items-center">
+          <div className="w-full sm:w-[50%]">
+            <MainBox
+              heading={
+                <h1 className="text-special font-bold  text-[24px] md:text-[28px] ">
+                  {t("home.increase_24hour")}
+                  <br /> 24H
+                </h1>
+              }
+              list_items={gainersDayData}
+            />
+          </div>
+          <div className="w-full sm:w-[50%]">
+            <MainBox
+              heading={
+                <h1 className="text-special font-bold   text-[24px] md:text-[28px] ">
+                  {t("home.decrease_24hour")} <br /> 24H
+                </h1>
+              }
+              list_items={loosersDayData}
+            />
+          </div>
         </div>
       </div>
     </div>
